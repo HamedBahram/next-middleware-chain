@@ -1,0 +1,20 @@
+{
+  "navigation": {
+    "home": "Startseite",
+    "dashboard": "Dashboard"
+  },
+  "page": {
+    "home": {
+      "title": "Willkommen bei NextJs i18n",
+      "description": "Internationalisierung im NextJs 13 App-Router"
+    },
+    "dashboard": {
+      "title": "Dashboard-Seite",
+      "description": "Dies ist die Benutzer-Dashboard-Seite."
+    }
+  },
+  "auth": {
+    "signin": "Anmeldung",
+    "signout": "Ausloggen"
+  }
+}
