@@ -10,7 +10,10 @@ export type CustomMiddleware = (
 
 type MiddlewareFactory = (middleware: CustomMiddleware) => CustomMiddleware
 
-export function chain(functions: MiddlewareFactory[], index = 0): any {
+export function chain(
+  functions: MiddlewareFactory[],
+  index = 0
+): CustomMiddleware {
   const current = functions[index]
 
   if (current) {
