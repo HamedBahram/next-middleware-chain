@@ -1,23 +1,50 @@
-// import type { NextFetchEvent, NextMiddleware, NextRequest } from 'next/server'
+import { NextFetchEvent, NextRequest, NextResponse } from 'next/server'
 
-// export function withMiddleware1(middleware: NextMiddleware) {
-//   return async (request: NextRequest, event: NextFetchEvent) => {
-//     const url = request.url
-//     console.log('middleware1 =>', { url })
+import { getToken } from 'next-auth/jwt'
+import { Locale, i18n } from '@/i18n.config'
+import { CustomMiddleware } from './chain'
 
-//     return middleware(request, event)
-//   }
-// }
+const protectedPaths = ['/dashboard']
 
-import { withAuth } from 'next-auth/middleware'
+function getProtectedRoutes(protectedPaths: string[], locales: Locale[]) {
+  let protectedPathsWithLocale = [...protectedPaths]
 
-export default withAuth(
-  function middleware(req) {
-    console.log(req.nextauth.token)
-  },
-  {
-    callbacks: {
-      authorized: ({ token }) => !!token
+  protectedPaths.forEach(route => {
+    locales.forEach(
+      locale =>
+        (protectedPathsWithLocale = [
+          ...protectedPathsWithLocale,
+          `/${locale}${route}`
+        ])
+    )
+  })
+
+  return protectedPathsWithLocale
+}
+
+export function withAuthMiddleware(middleware: CustomMiddleware) {
+  return async (request: NextRequest, event: NextFetchEvent) => {
+    // Create a response object to pass down the chain
+    const response = NextResponse.next()
+
+    const token = await getToken({ req: request })
+
+    // @ts-ignore
+    request.nextauth = request.nextauth || {}
+    // @ts-ignore
+    request.nextauth.token = token
+    const pathname = request.nextUrl.pathname
+
+    const protectedPathsWithLocale = getProtectedRoutes(protectedPaths, [
+      ...i18n.locales
+    ])
+
+    if (!token && protectedPathsWithLocale.includes(pathname)) {
+      const signInUrl = new URL('/api/auth/signin', request.url)
+      signInUrl.searchParams.set('callbackUrl', pathname)
+      return NextResponse.redirect(signInUrl)
     }
+
+    return middleware(request, event, response)
   }
-)
+}
