@@ -2,7 +2,7 @@ import { Locale } from '@/i18n.config'
 import { getDictionary } from '@/lib/dictionary'
 
 import { getServerSession } from 'next-auth'
-import { authOptions } from '@/app/api/auth/[...nextauth]/route'
+import { authOptions } from '@/app/api/auth/_options'
 
 import AuthButton from '@/components/auth-button'
 
