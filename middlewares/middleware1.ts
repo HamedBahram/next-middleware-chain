@@ -39,10 +39,13 @@ export function withAuthMiddleware(middleware: CustomMiddleware) {
       ...i18n.locales
     ])
 
-    if (!token && protectedPathsWithLocale.includes(pathname)) {
+    if (
+      !token &&
+      protectedPathsWithLocale.some((path) => pathname.includes(path))
+    ) {
       const signInUrl = new URL('/api/auth/signin', request.url)
       signInUrl.searchParams.set('callbackUrl', pathname)
-      return NextResponse.redirect(signInUrl)
+      return NextResponse.redirect(signInUrl);
     }
 
     return middleware(request, event, response)
