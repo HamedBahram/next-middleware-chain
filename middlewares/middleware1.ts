@@ -1,13 +1,9 @@
-import {
-  NextResponse,
-  type NextFetchEvent,
-  type NextRequest
-} from 'next/server'
+import { NextResponse } from 'next/server'
 
-import { CustomMiddleware } from './chain'
+import { MiddlewareFactory } from './stack'
 
-export function withMiddleware1(middleware: CustomMiddleware) {
-  return async (request: NextRequest, event: NextFetchEvent) => {
+export const withMiddleware1: MiddlewareFactory = middleware => {
+  return async (request, event) => {
     // The first middleware in the chain has to create the response
     // object and pass it down the chain.
     const response = NextResponse.next()

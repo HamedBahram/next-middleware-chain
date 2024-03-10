@@ -1,17 +1,7 @@
-import {
-  NextResponse,
-  type NextFetchEvent,
-  type NextRequest
-} from 'next/server'
+import { MiddlewareFactory } from './stack'
 
-import { CustomMiddleware } from './chain'
-
-export function withMiddleware2(middleware: CustomMiddleware) {
-  return async (
-    request: NextRequest,
-    event: NextFetchEvent,
-    response: NextResponse
-  ) => {
+export const withMiddleware2: MiddlewareFactory = middleware => {
+  return async (request, event, response) => {
     // Perform whatever logic the second middleware needs to do
     const pathname = request.nextUrl.pathname
     console.log('middleware2 =>', { pathname })
